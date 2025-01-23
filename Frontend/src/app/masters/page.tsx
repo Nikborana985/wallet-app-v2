@@ -1,6 +1,12 @@
 'use client'
 
 import { useState } from 'react'
+
+type Subcategory = {
+  name: string
+  type: 'Income' | 'Expense'
+  category: string
+}
 import { useAppContext } from '@/context/AppContext'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -15,25 +21,36 @@ export default function MastersPage() {
   const { accounts, setAccounts, categories, setCategories, subcategories, setSubcategories, currency } = useAppContext()
   const [newAccount, setNewAccount] = useState({
     name: '',
-    type: '',
+    type: 'Income',
     balance: 0,
     billGenerationDate: '',
     dueDate: '',
     reminder: false
   })
   const [newCategory, setNewCategory] = useState({ name: '' })
-  const [newSubcategory, setNewSubcategory] = useState({
+  const [newSubcategory, setNewSubcategory] = useState<Subcategory>({
     name: '',
-    type: '',
+    type: 'Income',
     category: ''
   })
-  const [editItem, setEditItem] = useState(null)
+  type EditItem = {
+    id?: number;
+    name: string;
+    type: string;
+    balance?: number;
+    billGenerationDate?: string;
+    dueDate?: string;
+    reminder?: boolean;
+    category?: string;
+  };
+  
+  const [editItem, setEditItem] = useState<EditItem | null>(null)
 
   const handleAddAccount = () => {
     setAccounts([...accounts, { id: Date.now(), ...newAccount }])
     setNewAccount({
       name: '',
-      type: '',
+      type: 'Income',
       balance: 0,
       billGenerationDate: '',
       dueDate: '',
@@ -47,21 +64,20 @@ export default function MastersPage() {
   }
 
   const handleAddSubcategory = () => {
-    setSubcategories([...subcategories, { id: Date.now(), ...newSubcategory }])
+    setSubcategories([...subcategories, { id: Date.now(), ...newSubcategory, type: newSubcategory.type as 'Income' | 'Expense' }])
     setNewSubcategory({
       name: '',
-      type: '',
+      type: 'Income',
       category: ''
     })
   }
 
-  const handleEdit = (item, type) => {
+  const handleEdit = (item: { id?: number; name: any; type?: any; balance?: any; billGenerationDate?: any; dueDate?: any; reminder?: any; category?: any }, type: string) => {
     // Create a complete copy of the item with all required fields
     const editItemData = {
       ...item,
       type,
       name: item.name || '',
-      type: item.type || '',
       category: item.category || '',
       balance: item.balance || 0,
       billGenerationDate: item.billGenerationDate || '',
@@ -72,17 +88,17 @@ export default function MastersPage() {
   }
 
   const handleSaveEdit = () => {
-    if (editItem.type === 'account') {
-      setAccounts(accounts.map(account => account.id === editItem.id ? editItem : account))
-    } else if (editItem.type === 'category') {
-      setCategories(categories.map(category => category.id === editItem.id ? editItem : category))
-    } else if (editItem.type === 'subcategory') {
-      setSubcategories(subcategories.map(subcategory => subcategory.id === editItem.id ? editItem : subcategory))
+    if (editItem && editItem.type === 'account') {
+      setAccounts(accounts.map(account => account.id === editItem?.id ? { ...account, ...editItem } : account))
+    } else if (editItem && editItem.type === 'category') {
+      setCategories(categories.map(category => category.id === editItem.id ? { ...category, ...editItem } : category))
+    } else if (editItem && editItem.type === 'subcategory') {
+      setSubcategories(subcategories.map(subcategory => subcategory.id === editItem.id ? { ...subcategory, ...editItem, type: editItem.type as 'Income' | 'Expense' } : subcategory))
     }
     setEditItem(null)
   }
 
-  const handleDelete = (id, type) => {
+  const handleDelete = (id: number, type: string) => {
     if (type === 'account') {
       setAccounts(accounts.filter(account => account.id !== id))
     } else if (type === 'category') {
@@ -312,7 +328,7 @@ export default function MastersPage() {
                       <Label htmlFor="subcategoryType" className="text-right">
                         Type
                       </Label>
-                      <Select onValueChange={(value) => setNewSubcategory({ ...newSubcategory, type: value })}>
+                      <Select onValueChange={(value) => setNewSubcategory({ ...newSubcategory, type: value as 'Income' | 'Expense' })}>
                         <SelectTrigger className="col-span-3">
                           <SelectValue placeholder="Select type" />
                         </SelectTrigger>
@@ -422,7 +438,7 @@ export default function MastersPage() {
                         className="col-span-3"
                       />
                     </div>
-                    {editItem.type === 'Credit Card' && (
+                    {editItem.type === 'account' && newAccount.type === 'Credit Card' && (
                       <>
                         <div className="grid grid-cols-4 items-center gap-4">
                           <Label htmlFor="editBillGenerationDate" className="text-right">
