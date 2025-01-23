@@ -3,10 +3,9 @@
   "version": "1.0.0",
   "description": "Backend for Expense Management Web Application",
   "main": "dist/app.js",
-  "type": "module",
   "scripts": {
     "start": "node dist/app.js",
-    "dev": "ts-node-dev --respawn --transpile-only src/app.ts",
+    "dev": "ts-node-dev --respawn src/app.ts",
     "build": "tsc",
     "test": "jest"
   },

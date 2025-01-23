@@ -2,7 +2,7 @@ import express from 'express';
 import mongoose from 'mongoose';
 import cors from 'cors';
 import dotenv from 'dotenv';
-import routes from './routes/index.js';
+import routes from './routes/index';
 
 // Load environment variables
 dotenv.config();
