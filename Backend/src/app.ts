@@ -2,7 +2,7 @@ import express from 'express';
 import mongoose from 'mongoose';
 import cors from 'cors';
 import dotenv from 'dotenv';
-import routes from './routes';
+import routes from './routes/index.js';
 
 // Load environment variables
 dotenv.config();
@@ -20,7 +20,7 @@ app.use(express.urlencoded({ extended: true }));
 // Database connection
 const connectDB = async () => {
   try {
-    const mongoURI = process.env.MONGODB_URI || 'mongodb://localhost:27017/wallet-app';
+    const mongoURI = process.env.MONGODB_URI || "mongodb+srv://sanjayborana985:San985jay@mongodb@wallet-app.hf04d.mongodb.net/?retryWrites=true&w=majority&appName=wallet-app";
     await mongoose.connect(mongoURI);
     console.log('MongoDB Connected...');
   } catch (err) {

@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { Account, Transaction, Budget, Investment, Category, Subcategory } from '../models';
+import { Account, Transaction, Budget, Investment, Category, Subcategory } from '../models/index.js';
 
 // Account Controllers
 export const accountController = {
