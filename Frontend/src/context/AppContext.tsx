@@ -1,6 +1,6 @@
 'use client'
 
-import React, { createContext, useContext, useState, useEffect } from 'react'
+import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react'
 
 type Account = {
   id: number
@@ -13,6 +13,8 @@ type Account = {
 }
 
 type Transaction = {
+  remarks: ReactNode
+  subcategory: any
   id: number
   date: string
   accountId: number

@@ -519,30 +519,29 @@ export default function TransactionsPage() {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {filteredTransactions.map((transaction: Transaction) => {
-            const typedTransaction: Transaction = {
-              ...transaction,
-              frequency: transaction.frequency || 'Monthly'
-            }
-            return (
-              <TableRow key={typedTransaction.id}>
-                <TableCell>{typedTransaction.date}</TableCell>
-                <TableCell>{typedTransaction.accountName}</TableCell>
-                <TableCell>{typedTransaction.category}</TableCell>
-                <TableCell>{typedTransaction.subcategory}</TableCell>
-                <TableCell className={typedTransaction.amount >= 0 ? 'text-green-600' : 'text-red-600'}>
-                  {currency}{Math.abs(typedTransaction.amount).toFixed(2)}
-                </TableCell>
-                <TableCell>{typedTransaction.remarks}</TableCell>
-                <TableCell>
-                  <Button variant="ghost" size="sm" onClick={() => handleEdit(typedTransaction)}>Edit</Button>
-                  <Button variant="ghost" size="sm" onClick={() => {
-                    setTransactions(transactions.filter(t => t.id !== typedTransaction.id))
-                  }}>Delete</Button>
-                </TableCell>
-              </TableRow>
-            )
-          })}
+        {filteredTransactions.map((transaction) => (
+  <TableRow key={transaction.id}>
+    <TableCell>{transaction.date}</TableCell>
+    <TableCell>{transaction.accountName}</TableCell>
+    <TableCell>{transaction.category}</TableCell>
+    <TableCell>{transaction.subcategory}</TableCell>
+    <TableCell className={transaction.amount >= 0 ? 'text-green-600' : 'text-red-600'}>
+      {currency}{Math.abs(transaction.amount).toFixed(2)}
+    </TableCell>
+    <TableCell>{transaction.remarks}</TableCell>
+    <TableCell>
+      <Button variant="ghost" size="sm" onClick={() => handleEdit({
+        ...transaction,
+        frequency: transaction.frequency || 'Monthly',
+        remarks: '',
+        recurringDate: transaction.recurringDate || ''
+      })}>Edit</Button>
+      <Button variant="ghost" size="sm" onClick={() => {
+        setTransactions(transactions.filter(t => t.id !== transaction.id))
+      }}>Delete</Button>
+    </TableCell>
+  </TableRow>
+))}
         </TableBody>
       </Table>
       <div className="flex justify-end">
