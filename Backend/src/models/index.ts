@@ -1,11 +1,25 @@
-import mongoose from 'mongoose';
+import mongoose, { Document, Schema } from 'mongoose';
+import { z } from 'zod';
+
+// Validation schemas
+export const AccountSchema = z.object({
+  name: z.string().min(1),
+  type: z.enum(['Cash', 'Bank', 'Credit Card']),
+  balance: z.number().default(0),
+  billGenerationDate: z.string().optional(),
+  dueDate: z.string().optional(),
+  reminder: z.boolean().default(false)
+});
+
+export type Account = z.infer<typeof AccountSchema>;
 
 // Account Schema
-const accountSchema = new mongoose.Schema({
+const accountSchema = new Schema<Account>({
     name: {
         type: String,
         required: true,
-        unique: true
+        unique: true,
+        trim: true
     },
     type: {
         type: String,
@@ -17,22 +31,14 @@ const accountSchema = new mongoose.Schema({
         required: true,
         default: 0
     },
-    billGenerationDate: {
-        type: String,
-        required: false
-    },
-    dueDate: {
-        type: String,
-        required: false
-    },
+    billGenerationDate: String,
+    dueDate: String,
     reminder: {
         type: Boolean,
         default: false
-    },
-    createdAt: {
-        type: Date,
-        default: Date.now
     }
+}, {
+    timestamps: true
 });
 
 // Transaction Schema
