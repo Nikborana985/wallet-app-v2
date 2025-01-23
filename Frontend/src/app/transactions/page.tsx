@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { SetStateAction, useState } from 'react'
 import { useAppContext } from '@/context/AppContext'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -12,6 +12,20 @@ import { Switch } from '@/components/ui/switch'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import { MoreHorizontal } from 'lucide-react'
 import { motion } from 'framer-motion'
+
+type Transaction = {
+  id: number
+  date: string
+  accountId: number
+  accountName: string
+  category: string
+  subcategory: string
+  amount: number
+  isRecurring: boolean
+  frequency: 'Daily' | 'Weekly' | 'Monthly' | 'Yearly'
+  recurringDate: string
+  remarks: string
+}
 
 export default function TransactionsPage() {
   const { transactions, setTransactions, accounts, categories, subcategories, currency } = useAppContext()
@@ -47,7 +61,7 @@ export default function TransactionsPage() {
     minAmount: '',
     maxAmount: ''
   })
-  const [editTransaction, setEditTransaction] = useState(null)
+  const [editTransaction, setEditTransaction] = useState<null | (typeof newTransaction & { id: number })>(null)
 
   const handleAddTransaction = () => {
     setTransactions([...transactions, { id: Date.now(), ...newTransaction }])
@@ -76,6 +90,8 @@ export default function TransactionsPage() {
       subcategory: 'Transfer Out',
       amount: -transfer.amount,
       isRecurring: false,
+      frequency: 'Monthly' as const,
+      recurringDate: '',
       remarks: transfer.remarks
     }
     const destinationTransaction = {
@@ -87,6 +103,8 @@ export default function TransactionsPage() {
       subcategory: 'Transfer In',
       amount: transfer.amount,
       isRecurring: false,
+      frequency: 'Monthly' as const,
+      recurringDate: '',
       remarks: transfer.remarks
     }
     setTransactions([...transactions, sourceTransaction, destinationTransaction])
@@ -132,16 +150,15 @@ export default function TransactionsPage() {
     console.log('Exporting to Excel:', filteredTransactions)
   }
 
-  const handleEdit = (transaction) => {
-    setEditTransaction(transaction)
+  const handleEdit = (transaction: typeof newTransaction & { id: number }) => {
+    setEditTransaction({ ...transaction, frequency: transaction.frequency || 'Monthly' })
   }
 
-  const handleDelete = (id) => {
-    setTransactions(transactions.filter(t => t.id !== id))
-  }
 
-  const handleSaveEdit = () => {
-    setTransactions(transactions.map(t => t.id === editTransaction.id ? editTransaction : t))
+  function handleSaveEdit() {
+    if (editTransaction) {
+      setTransactions(transactions.map(t => t.id === editTransaction.id ? { ...editTransaction, frequency: editTransaction.frequency || 'Monthly' } : t))
+    }
     setEditTransaction(null)
   }
 
@@ -502,22 +519,30 @@ export default function TransactionsPage() {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {filteredTransactions.map((transaction) => (
-            <TableRow key={transaction.id}>
-              <TableCell>{transaction.date}</TableCell>
-              <TableCell>{transaction.accountName}</TableCell>
-              <TableCell>{transaction.category}</TableCell>
-              <TableCell>{transaction.subcategory}</TableCell>
-              <TableCell className={transaction.amount >= 0 ? 'text-green-600' : 'text-red-600'}>
-                {currency}{Math.abs(transaction.amount).toFixed(2)}
-              </TableCell>
-              <TableCell>{transaction.remarks}</TableCell>
-              <TableCell>
-                <Button variant="ghost" size="sm" onClick={() => handleEdit(transaction)}>Edit</Button>
-                <Button variant="ghost" size="sm" onClick={() => handleDelete(transaction.id)}>Delete</Button>
-              </TableCell>
-            </TableRow>
-          ))}
+          {filteredTransactions.map((transaction: Transaction) => {
+            const typedTransaction: Transaction = {
+              ...transaction,
+              frequency: transaction.frequency || 'Monthly'
+            }
+            return (
+              <TableRow key={typedTransaction.id}>
+                <TableCell>{typedTransaction.date}</TableCell>
+                <TableCell>{typedTransaction.accountName}</TableCell>
+                <TableCell>{typedTransaction.category}</TableCell>
+                <TableCell>{typedTransaction.subcategory}</TableCell>
+                <TableCell className={typedTransaction.amount >= 0 ? 'text-green-600' : 'text-red-600'}>
+                  {currency}{Math.abs(typedTransaction.amount).toFixed(2)}
+                </TableCell>
+                <TableCell>{typedTransaction.remarks}</TableCell>
+                <TableCell>
+                  <Button variant="ghost" size="sm" onClick={() => handleEdit(typedTransaction)}>Edit</Button>
+                  <Button variant="ghost" size="sm" onClick={() => {
+                    setTransactions(transactions.filter(t => t.id !== typedTransaction.id))
+                  }}>Delete</Button>
+                </TableCell>
+              </TableRow>
+            )
+          })}
         </TableBody>
       </Table>
       <div className="flex justify-end">
