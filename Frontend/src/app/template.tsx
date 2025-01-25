@@ -1,8 +1,8 @@
 'use client'
 
-import { Sidebar } from '@/components/sidebar'
-import { AppProvider } from '@/context/AppContext'
-import ErrorBoundary from '@/components/ErrorBoundary'
+import { ErrorBoundary } from '@/components/ErrorBoundary'
+import { Providers } from '@/components/Providers'
+import { Suspense } from 'react'
 
 export default function Template({
   children,
@@ -11,16 +11,9 @@ export default function Template({
 }) {
   return (
     <ErrorBoundary>
-      <AppProvider>
-        <div className="flex h-screen bg-background">
-          <Sidebar />
-          <main className="flex-1 overflow-y-auto p-8">
-            <div className="max-w-7xl mx-auto">
-              {children}
-            </div>
-          </main>
-        </div>
-      </AppProvider>
+      <Suspense fallback={<div>Loading...</div>}>
+        <Providers>{children}</Providers>
+      </Suspense>
     </ErrorBoundary>
   )
 } 

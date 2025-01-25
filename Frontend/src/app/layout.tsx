@@ -1,7 +1,7 @@
 import { Inter } from 'next/font/google'
 import '@/styles/globals.css'
-import { Providers } from '../components/Providers'
 import { Metadata, Viewport } from 'next'
+import { headers } from 'next/headers'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -15,17 +15,17 @@ export const viewport: Viewport = {
   initialScale: 1,
 }
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
+  headers() // This is needed to opt into dynamic rendering
+
   return (
-    <html lang="en">
-      <body className={inter.className}>
-        <Providers>
-          {children}
-        </Providers>
+    <html lang="en" suppressHydrationWarning>
+      <body className={inter.className} suppressHydrationWarning>
+        {children}
       </body>
     </html>
   )
