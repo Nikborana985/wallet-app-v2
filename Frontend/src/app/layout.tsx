@@ -1,18 +1,14 @@
+import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
-import '@/styles/globals.css'
-import { Metadata, Viewport } from 'next'
+import './globals.css'
+import { AppProvider } from '@/context/AppContext'
 import { Providers } from './providers'
 
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: 'Wallet - Personal Finance Manager',
-  description: 'Manage your personal finances with ease',
-}
-
-export const viewport: Viewport = {
-  width: 'device-width',
-  initialScale: 1,
+  title: 'Wallet App',
+  description: 'Track your finances with ease',
 }
 
 export default function RootLayout({
@@ -24,7 +20,9 @@ export default function RootLayout({
     <html lang="en">
       <body className={inter.className}>
         <Providers>
-          {children}
+          <AppProvider>
+            {children}
+          </AppProvider>
         </Providers>
       </body>
     </html>

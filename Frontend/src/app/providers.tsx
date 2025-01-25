@@ -1,6 +1,5 @@
 'use client'
 
-import { AppProvider } from '@/context/AppContext'
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 
@@ -16,7 +15,7 @@ function ClientProviders({ children }: { children: React.ReactNode }) {
     return <div style={{ visibility: 'hidden' }}>{children}</div>
   }
 
-  return <AppProvider>{children}</AppProvider>
+  return children
 }
 
 export function Providers({ children }: { children: React.ReactNode }) {

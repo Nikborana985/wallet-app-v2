@@ -1,145 +1,60 @@
 'use client'
 
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react'
+import React, { createContext, useContext, useState } from 'react'
+import { Account, Transaction, Budget, Investment, UserProfile, Category, Subcategory } from '@/types'
 
-type Account = {
-  id: number
-  name: string
-  type: string
-  balance: number
-  billGenerationDate?: string
-  dueDate?: string
-  reminder?: boolean
-}
-
-type Transaction = {
-  remarks: ReactNode
-  subcategory: any
-  id: number
-  date: string
-  accountId: number
-  accountName: string
-  category: string
-  amount: number
-  isRecurring: boolean
-  frequency?: 'Daily' | 'Weekly' | 'Monthly' | 'Yearly'
-  recurringDate?: string
-}
-
-type Budget = {
-  id: number
-  month: string
-  category: string
-  subcategory: string
-  budgetAmount: number
-  actualAmount: number
-}
-
-type Investment = {
-  id: number
-  name: string
-  type: string
-  amount: number
-  purchaseDate: string
-}
-
-type UserProfile = {
-  name: string
-  age: number
-  monthlyIncome: number
-}
-
-type Category = {
-  id: number
-  name: string
-}
-
-type Subcategory = {
-  id: number
-  name: string
-  type: 'Income' | 'Expense'
-  category: string
-}
-
-type AppContextType = {
+interface AppContextType {
   accounts: Account[]
-  setAccounts: React.Dispatch<React.SetStateAction<Account[]>>
   transactions: Transaction[]
-  setTransactions: React.Dispatch<React.SetStateAction<Transaction[]>>
   budgets: Budget[]
-  setBudgets: React.Dispatch<React.SetStateAction<Budget[]>>
   investments: Investment[]
-  setInvestments: React.Dispatch<React.SetStateAction<Investment[]>>
   userProfile: UserProfile
-  setUserProfile: React.Dispatch<React.SetStateAction<UserProfile>>
   currency: string
-  setCurrency: React.Dispatch<React.SetStateAction<string>>
   categories: Category[]
-  setCategories: React.Dispatch<React.SetStateAction<Category[]>>
   subcategories: Subcategory[]
-  setSubcategories: React.Dispatch<React.SetStateAction<Subcategory[]>>
+  setAccounts: (accounts: Account[]) => void
+  setTransactions: (transactions: Transaction[]) => void
+  setBudgets: (budgets: Budget[]) => void
+  setInvestments: (investments: Investment[]) => void
+  setUserProfile: (userProfile: UserProfile) => void
+  setCurrency: (currency: string) => void
+  setCategories: (categories: Category[]) => void
+  setSubcategories: (subcategories: Subcategory[]) => void
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined)
 
 export function AppProvider({ children }: { children: React.ReactNode }) {
-  const [mounted, setMounted] = useState(false)
   const [accounts, setAccounts] = useState<Account[]>([])
   const [transactions, setTransactions] = useState<Transaction[]>([])
   const [budgets, setBudgets] = useState<Budget[]>([])
   const [investments, setInvestments] = useState<Investment[]>([])
   const [userProfile, setUserProfile] = useState<UserProfile>({ name: '', age: 0, monthlyIncome: 0 })
-  const [currency, setCurrency] = useState('₹')
+  const [currency, setCurrency] = useState('USD')
   const [categories, setCategories] = useState<Category[]>([])
   const [subcategories, setSubcategories] = useState<Subcategory[]>([])
 
-  useEffect(() => {
-    setMounted(true)
-  }, [])
-
-  useEffect(() => {
-    if (mounted) {
-      const storedAccounts = localStorage.getItem('accounts')
-      if (storedAccounts) setAccounts(JSON.parse(storedAccounts))
-
-      const storedTransactions = localStorage.getItem('transactions')
-      if (storedTransactions) setTransactions(JSON.parse(storedTransactions))
-
-      const storedBudgets = localStorage.getItem('budgets')
-      if (storedBudgets) setBudgets(JSON.parse(storedBudgets))
-
-      const storedInvestments = localStorage.getItem('investments')
-      if (storedInvestments) setInvestments(JSON.parse(storedInvestments))
-
-      const storedUserProfile = localStorage.getItem('userProfile')
-      if (storedUserProfile) setUserProfile(JSON.parse(storedUserProfile))
-
-      const storedCurrency = localStorage.getItem('currency')
-      if (storedCurrency) setCurrency(storedCurrency)
-
-      const storedCategories = localStorage.getItem('categories')
-      if (storedCategories) setCategories(JSON.parse(storedCategories))
-
-      const storedSubcategories = localStorage.getItem('subcategories')
-      if (storedSubcategories) setSubcategories(JSON.parse(storedSubcategories))
-    }
-  }, [mounted])
-
-  if (!mounted) {
-    return null
-  }
-
   return (
-    <AppContext.Provider value={{
-      accounts, setAccounts,
-      transactions, setTransactions,
-      budgets, setBudgets,
-      investments, setInvestments,
-      userProfile, setUserProfile,
-      currency, setCurrency,
-      categories, setCategories,
-      subcategories, setSubcategories
-    }}>
+    <AppContext.Provider
+      value={{
+        accounts,
+        transactions,
+        budgets,
+        investments,
+        userProfile,
+        currency,
+        categories,
+        subcategories,
+        setAccounts,
+        setTransactions,
+        setBudgets,
+        setInvestments,
+        setUserProfile,
+        setCurrency,
+        setCategories,
+        setSubcategories,
+      }}
+    >
       {children}
     </AppContext.Provider>
   )
