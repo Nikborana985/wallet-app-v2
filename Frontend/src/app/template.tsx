@@ -1,7 +1,5 @@
 'use client'
 
-import { ErrorBoundary } from '@/components/ErrorBoundary'
-import { Providers } from '@/components/Providers'
 import { Suspense } from 'react'
 
 export default function Template({
@@ -10,10 +8,8 @@ export default function Template({
   children: React.ReactNode
 }) {
   return (
-    <ErrorBoundary>
       <Suspense fallback={<div>Loading...</div>}>
-        <Providers>{children}</Providers>
+        {children}
       </Suspense>
-    </ErrorBoundary>
   )
-} 
+  }

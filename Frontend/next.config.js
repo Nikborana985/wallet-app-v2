@@ -3,9 +3,7 @@
 const nextConfig = {
   reactStrictMode: true,
   experimental: {
-    serverActions: {
-      allowedOrigins: ['localhost:3000'],
-    },
+    serverActions: true,
   },
   webpack: (config) => {
     config.resolve.fallback = {
