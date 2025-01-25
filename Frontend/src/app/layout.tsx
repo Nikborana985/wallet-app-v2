@@ -1,5 +1,5 @@
 import { Inter } from 'next/font/google'
-import { Metadata } from 'next'
+import { Metadata, Viewport } from 'next'
 import { Sidebar } from '@/components/sidebar'
 import { AppProvider } from '@/context/AppContext'
 import '@/styles/globals.css'
@@ -9,7 +9,11 @@ const inter = Inter({ subsets: ['latin'] })
 export const metadata: Metadata = {
   title: 'Wallet - Personal Finance Manager',
   description: 'Manage your personal finances with ease',
-  viewport: 'width=device-width, initial-scale=1',
+}
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
 }
 
 export default function RootLayout({
