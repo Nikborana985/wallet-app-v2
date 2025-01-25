@@ -1,8 +1,7 @@
 import { Inter } from 'next/font/google'
-import { Metadata, Viewport } from 'next'
-import { Sidebar } from '@/components/sidebar'
-import { AppProvider } from '@/context/AppContext'
 import '@/styles/globals.css'
+import { Providers } from '../components/Providers'
+import { Metadata, Viewport } from 'next'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -22,18 +21,11 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en">
       <body className={inter.className}>
-        <AppProvider>
-          <div className="flex h-screen bg-background">
-            <Sidebar />
-            <main className="flex-1 overflow-y-auto p-8">
-              <div className="max-w-7xl mx-auto">
-                {children}
-              </div>
-            </main>
-          </div>
-        </AppProvider>
+        <Providers>
+          {children}
+        </Providers>
       </body>
     </html>
   )

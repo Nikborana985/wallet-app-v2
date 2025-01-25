@@ -83,6 +83,7 @@ type AppContextType = {
 const AppContext = createContext<AppContextType | undefined>(undefined)
 
 export function AppProvider({ children }: { children: React.ReactNode }) {
+  const [mounted, setMounted] = useState(false)
   const [accounts, setAccounts] = useState<Account[]>([])
   const [transactions, setTransactions] = useState<Transaction[]>([])
   const [budgets, setBudgets] = useState<Budget[]>([])
@@ -92,65 +93,41 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   const [categories, setCategories] = useState<Category[]>([])
   const [subcategories, setSubcategories] = useState<Subcategory[]>([])
 
-  // Load data from localStorage on initial render
   useEffect(() => {
-    const storedAccounts = localStorage.getItem('accounts')
-    if (storedAccounts) setAccounts(JSON.parse(storedAccounts))
-
-    const storedTransactions = localStorage.getItem('transactions')
-    if (storedTransactions) setTransactions(JSON.parse(storedTransactions))
-
-    const storedBudgets = localStorage.getItem('budgets')
-    if (storedBudgets) setBudgets(JSON.parse(storedBudgets))
-
-    const storedInvestments = localStorage.getItem('investments')
-    if (storedInvestments) setInvestments(JSON.parse(storedInvestments))
-
-    const storedUserProfile = localStorage.getItem('userProfile')
-    if (storedUserProfile) setUserProfile(JSON.parse(storedUserProfile))
-
-    const storedCurrency = localStorage.getItem('currency')
-    if (storedCurrency) setCurrency(storedCurrency)
-
-    const storedCategories = localStorage.getItem('categories');
-    if (storedCategories) setCategories(JSON.parse(storedCategories));
-
-    const storedSubcategories = localStorage.getItem('subcategories');
-    if (storedSubcategories) setSubcategories(JSON.parse(storedSubcategories));
+    setMounted(true)
   }, [])
 
-  // Save data to localStorage whenever it changes
   useEffect(() => {
-    localStorage.setItem('accounts', JSON.stringify(accounts))
-  }, [accounts])
+    if (mounted) {
+      const storedAccounts = localStorage.getItem('accounts')
+      if (storedAccounts) setAccounts(JSON.parse(storedAccounts))
 
-  useEffect(() => {
-    localStorage.setItem('transactions', JSON.stringify(transactions))
-  }, [transactions])
+      const storedTransactions = localStorage.getItem('transactions')
+      if (storedTransactions) setTransactions(JSON.parse(storedTransactions))
 
-  useEffect(() => {
-    localStorage.setItem('budgets', JSON.stringify(budgets))
-  }, [budgets])
+      const storedBudgets = localStorage.getItem('budgets')
+      if (storedBudgets) setBudgets(JSON.parse(storedBudgets))
 
-  useEffect(() => {
-    localStorage.setItem('investments', JSON.stringify(investments))
-  }, [investments])
+      const storedInvestments = localStorage.getItem('investments')
+      if (storedInvestments) setInvestments(JSON.parse(storedInvestments))
 
-  useEffect(() => {
-    localStorage.setItem('userProfile', JSON.stringify(userProfile))
-  }, [userProfile])
+      const storedUserProfile = localStorage.getItem('userProfile')
+      if (storedUserProfile) setUserProfile(JSON.parse(storedUserProfile))
 
-  useEffect(() => {
-    localStorage.setItem('currency', currency)
-  }, [currency])
+      const storedCurrency = localStorage.getItem('currency')
+      if (storedCurrency) setCurrency(storedCurrency)
 
-  useEffect(() => {
-    localStorage.setItem('categories', JSON.stringify(categories));
-  }, [categories]);
+      const storedCategories = localStorage.getItem('categories')
+      if (storedCategories) setCategories(JSON.parse(storedCategories))
 
-  useEffect(() => {
-    localStorage.setItem('subcategories', JSON.stringify(subcategories));
-  }, [subcategories]);
+      const storedSubcategories = localStorage.getItem('subcategories')
+      if (storedSubcategories) setSubcategories(JSON.parse(storedSubcategories))
+    }
+  }, [mounted])
+
+  if (!mounted) {
+    return null
+  }
 
   return (
     <AppContext.Provider value={{
