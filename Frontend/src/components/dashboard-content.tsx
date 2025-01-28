@@ -13,6 +13,13 @@ import { motion } from 'framer-motion'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
 import { Trash2 } from 'lucide-react'
 
+interface BudgetAccumulator {
+  [key: string]: {
+    budget: number;
+    actual: number;
+  };
+}
+
 export function DashboardContent() {
   const { accounts, transactions, budgets, currency } = useAppContext()
   const [spendingTrendPeriod, setSpendingTrendPeriod] = useState('Monthly')
@@ -67,7 +74,7 @@ export function DashboardContent() {
     CreditCards: accountGroups.CreditCards.reduce((sum, account) => sum + account.balance, 0),
   }
 
-  const categoryBudgets = budgets.reduce((acc, budget) => {
+  const categoryBudgets = budgets.reduce<BudgetAccumulator>((acc, budget) => {
     if (!acc[budget.category]) {
       acc[budget.category] = { budget: 0, actual: 0 }
     }
@@ -89,7 +96,7 @@ export function DashboardContent() {
     { id: 3, date: '2023-06-26', message: 'New investment opportunity: Tech stocks on the rise' },
   ])
 
-  const deleteNotification = (id) => {
+  const deleteNotification = (id: number) => {
     setNotifications(notifications.filter(n => n.id !== id))
   }
 
@@ -115,7 +122,7 @@ export function DashboardContent() {
                   transition={{ type: "spring", stiffness: 300 }}
                 >
                   <h3 className="font-bold text-lg mb-2">{groupName}</h3>
-                  <p className="text-2xl font-bold">{currency}{totalBalances[groupName].toFixed(2)}</p>
+                  <p className="text-2xl font-bold">{currency}{totalBalances[groupName as keyof typeof totalBalances].toFixed(2)}</p>
                   <Dialog>
                     <DialogTrigger asChild>
                       <Button variant="link" className="text-sm text-blue-500 mt-2">View Details</Button>
